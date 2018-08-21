@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DBT Helper</string>
+    <string name="title_activity_add_entry">AddEntry</string>
+    <string name="title_activity_main">MainActivity</string>
+</resources>
