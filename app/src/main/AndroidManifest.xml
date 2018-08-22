@@ -10,8 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main">
+            android:name=".DayActivity"
+            android:label="@string/title_activity_day">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,8 +19,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddEntry"
-            android:label="@string/title_activity_add_entry" />
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main" />
+        <activity
+            android:name=".EntryActivity"
+            android:label="@string/title_activity_entry" />
+        <activity android:name=".SkillsActivity"></activity>
     </application>
 
 </manifest>
