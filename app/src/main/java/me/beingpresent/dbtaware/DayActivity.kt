@@ -1,11 +1,11 @@
 package me.beingpresent.dbtaware
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.view.View
 import android.widget.ListView
-import android.widget.Toast
 
 class DayActivity : Activity() {
 
@@ -18,7 +18,7 @@ class DayActivity : Activity() {
         fab = findViewById(R.id.fab)
         fab.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v : View ?) {
-                Toast.makeText(this@DayActivity, "Hi!", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this@DayActivity, EntryActivity::class.java))
             }
         })
         listView = findViewById(R.id.entries_list_view)
