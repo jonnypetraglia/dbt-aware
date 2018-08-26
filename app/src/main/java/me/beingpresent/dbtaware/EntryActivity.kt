@@ -2,14 +2,20 @@ package me.beingpresent.dbtaware
 
 import android.app.Activity
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.RatingBar
 import android.widget.TextView
+import java.util.*
 
 class EntryActivity : Activity() {
+
+    private var dbtDb: DbtDatabase? = null
 
     private val emotions = arrayOf("Sadness", "Anger", "Anxiety", "Shame", "Happiness")
     private val urges = arrayOf("Self-Harm", "To kill myself")
@@ -49,7 +55,9 @@ class EntryActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_entry)
-        entryContents = this.findViewById<LinearLayout>(R.id.entryContents)
+        entryContents = findViewById(R.id.entryContents)
+
+        dbtDb = DbtDatabase.getInstance(this)
 
         createHeader("Emotions")
         for(emotion in emotions) {
@@ -79,6 +87,43 @@ class EntryActivity : Activity() {
         createHeader("Distress Tolerance Skills")
         for(skill in distressToleranceSkills)
             createSkill(skill)
+
+        val fab : FloatingActionButton = findViewById(R.id.fab)
+        fab.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v : View?) {
+                var type = -1
+                val time = Date().time.toInt()
+                Log.d("AHHHH.fab clicked", "woot")
+                for(i in 0..entryContents.childCount) {
+                    val view : View = entryContents.getChildAt(i)
+                    var name : String?
+                    var rating: Int
+                    Log.d("AHHHH.fab clicked", "woot " + i)
+                    if(view is LinearLayout) {
+                        rating = (view.getChildAt(1) as RatingBar).rating.toInt()
+                        if(rating==0)
+                            continue
+                        name = (view.getChildAt(0) as TextView).text as String
+                    } else if(view is CheckBox){
+                        if(!view.isChecked)
+                            continue
+                        rating = 1
+                        name = view.text as String
+                    } else {
+                        type = minOf(type + 1, 3)
+                        continue
+                    }
+                    insertEntry(type, name, rating, time)
+                }
+
+            }
+        })
+    }
+
+    fun insertEntry(type: Int, name: String, rating: Int, dateTime: Int) {
+        Log.d("AHHHH.insertEntry", name)
+        val entry = Entry(null, type, name, rating, dateTime)
+        dbtDb?.dao()?.insertEntry(entry)
     }
 
     fun createHeader(str: String) {
@@ -91,6 +136,7 @@ class EntryActivity : Activity() {
     fun createRating(str: String) {
         val txt = TextView(this)
         txt.text = str
+        txt.id = android.R.id.text1
         txt.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20F)
 
         val bar = RatingBar(this)
@@ -104,8 +150,6 @@ class EntryActivity : Activity() {
         (txt.layoutParams as LinearLayout.LayoutParams).weight = 1.0F
         (txt.layoutParams as LinearLayout.LayoutParams).gravity = Gravity.CENTER
         entryContents.addView(layout)
-
-//        bar.layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
     }
 
 
