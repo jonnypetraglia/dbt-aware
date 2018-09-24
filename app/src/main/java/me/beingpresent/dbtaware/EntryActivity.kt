@@ -92,8 +92,8 @@ class EntryActivity : Activity() {
         fab.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v : View?) {
                 var type = -1
-                val time = Date().time.toInt()
-                Log.d("AHHHH.fab clicked", "woot")
+                val time = (Date().time/1000).toInt()
+                Log.d("AHHHH.fab clicked", "woot " + time)
                 for(i in 0..entryContents.childCount) {
                     val view : View = entryContents.getChildAt(i)
                     var name : String?
