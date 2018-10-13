@@ -17,10 +17,13 @@ class DateActivity : AppCompatActivity() {
         pager.adapter = DateAdapter(this, object : View.OnClickListener {
             override fun onClick(v : View?) {
                 val intent = Intent(this@DateActivity, DayActivity::class.java)
-                intent.putExtra("fromToday", pager.currentItem - (pager.adapter as DateAdapter).count + 1)
+                intent.putExtra("fromToday", 42)
                 startActivity(intent)
             }
+
+
         })
         pager.currentItem = (pager.adapter as DateAdapter).count
+
     }
 }

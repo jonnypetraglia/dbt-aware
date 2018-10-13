@@ -1,19 +1,24 @@
 package me.beingpresent.dbtaware
 
-import android.content.Context
+import android.app.Activity
+import android.content.Intent
 import android.support.v4.view.PagerAdapter
+import android.support.v7.widget.AppCompatRatingBar
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DateAdapter(ccontext: Context, llistener: View.OnClickListener)
+class DateAdapter(aactivity: Activity, llistener: View.OnClickListener)
     : PagerAdapter()
 {
-    private var context: Context = ccontext
+    private var activity: Activity = aactivity
     private var dbtDb: DbtDatabase? = null
     private var listener: View.OnClickListener = llistener
 
@@ -26,24 +31,44 @@ class DateAdapter(ccontext: Context, llistener: View.OnClickListener)
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         Log.d("DBT-DateAdapter", "instantiateItem")
-        val view = LayoutInflater.from(context).
-                inflate(android.R.layout.simple_list_item_1, container, false)
+
+
+        val view = ScrollView(activity)
+        val ll = LinearLayout(activity)
+        ll.orientation = LinearLayout.VERTICAL
+        view.addView(ll)
         val day = Date()
         val i = getItem(position) as Int
         day.date = day.date - i
 
 
-        dbtDb = DbtDatabase.getInstance(context)
-        var entries : List<Entry> = dbtDb?.dao()?.getAllEntries()!!
-        for(entry in entries)
-            Log.d("DBT.All:", entry.dateTime.toString() + " - " + entry.name)
-
-        Log.d("DBT.today", (day.time/1000).toString())
+        dbtDb = DbtDatabase.getInstance(activity)
         val pojoMaxs = dbtDb?.dao()?.getEntryMaxesForDay(getStartOfDay((day.time/1000).toInt()))!!
-        for(pojo in pojoMaxs)
-            Log.d("DBT.Today:", pojo.maxRating.toString() + " - " + pojo.type)
+        for(pojo in pojoMaxs) {
+            Log.d("DBT.Max:", pojo.toString())
+            val layout = LayoutInflater.from(activity).
+                    inflate(R.layout.entry_line, null, false)
 
-        view.findViewById<TextView>(android.R.id.text1).setText(SimpleDateFormat("MMM d").format(day).toString())
+            layout.findViewById<TextView>(android.R.id.text1).text = pojo.name
+            val ratingBar = layout.findViewById<AppCompatRatingBar>(android.R.id.progress)
+            ratingBar.rating = pojo.maxRating
+            ratingBar.setIsIndicator(true)
+
+            ll.addView(layout)
+        }
+
+        val more = Button(activity)
+        more.text = "View Details"
+        more.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v : View?) {
+                val intent = Intent(activity, DayActivity::class.java)
+                intent.putExtra("fromToday", i+365)
+                activity.startActivity(intent)
+            }
+        })
+        ll.addView(more)
+
+        activity.title = SimpleDateFormat("MMM d").format(day).toString()
 
         container.addView(view)
 

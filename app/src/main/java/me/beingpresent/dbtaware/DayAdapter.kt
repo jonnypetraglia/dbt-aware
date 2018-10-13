@@ -7,12 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
+import java.text.SimpleDateFormat
 import java.util.*
 
 class DayAdapter(ccontext: Context, fromToday: Int)
     : BaseAdapter()
 {
-    var entries : List<Entry>? = null
+    var times : List<DbtDao.TimePojo>? = null
 
     init {
         val dbtDb = DbtDatabase.getInstance(ccontext)
@@ -22,13 +23,10 @@ class DayAdapter(ccontext: Context, fromToday: Int)
 
         Log.d("AHHHH.Start:", "From " + startOfToday + " to " + endOfToday + " (" + fromToday + ")")
 
-        entries = dbtDb?.dao()?.getEntriesForDay(startOfToday, endOfToday)
-        Log.d("AHHHH.Count", "Hmm " + entries!!.size)
-        for(entry in entries!!) {
-            Log.d("AHHHH.Name!:", entry.toString())
-            Log.d("AHHHH.Diff!:", "" + startOfToday + "<=" + entry.dateTime + "=" + (startOfToday<=entry.dateTime) + " && " + endOfToday + ">" + entry.dateTime + "=" + (endOfToday>entry.dateTime))
+        times = dbtDb?.dao()?.getTimesForDay(startOfToday)
+        for(time in times!!) {
+            Log.d("AHHHH.Time:", time.toString())
         }
-        Log.d("AHHHH.Count", "Hmm " + entries!!.size)
     }
 
     private val context = ccontext
@@ -36,16 +34,21 @@ class DayAdapter(ccontext: Context, fromToday: Int)
         var view : View? = convertView
         if(view  == null ) {
             view = LayoutInflater.from(context).
-                    inflate(android.R.layout.simple_list_item_1, parent, false)
+                    inflate(android.R.layout.simple_list_item_2, parent, false)
         }
-        view!!.findViewById<TextView>(android.R.id.text1).text = entries!!.get(p0).name
+        Log.d("AHHHH.getView", times!![p0].time.toString())
+        val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        cal.time = Date(times!![p0].time.toLong()*1000)
+        cal.timeZone = TimeZone.getDefault()
+        view!!.findViewById<TextView>(android.R.id.text1).text = SimpleDateFormat("h:mm a").format(cal.time)
+        view!!.findViewById<TextView>(android.R.id.text2).text = times!![p0].countRatings.toString()
 
-        return view!!
+        return view
     }
 
     override fun getItem(position: Int): Any {
         Log.d("AHHHH.position", position.toString())
-        return entries!!.get(position)
+        return times!!.get(position)
     }
 
     override fun getItemId(p0: Int): Long {
@@ -54,8 +57,8 @@ class DayAdapter(ccontext: Context, fromToday: Int)
 
     override fun getCount(): Int {
         Log.d("AHHHH.count", "Count")
-        Log.d("AHHHH.count", entries!!.size.toString())
-        return entries!!.size
+        Log.d("AHHHH.count", times!!.size.toString())
+        return times!!.size
     }
 
     companion object {

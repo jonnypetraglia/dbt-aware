@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.util.Log
 import android.util.TypedValue
-import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.CheckBox
 import android.widget.LinearLayout
@@ -138,21 +138,11 @@ class EntryActivity : Activity() {
     }
 
     fun createRating(str: String) {
-        val txt = TextView(this)
-        txt.text = str
-        txt.id = android.R.id.text1
-        txt.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20F)
+        val layout = LayoutInflater.from(this).
+                inflate(R.layout.entry_line, null, false)
 
-        val bar = RatingBar(this)
-        bar.numStars = 5
-        bar.stepSize = 1.0F
+        layout.findViewById<TextView>(android.R.id.text1).text = str
 
-        val layout = LinearLayout(this)
-        layout.orientation = LinearLayout.HORIZONTAL
-        layout.addView(txt)
-        layout.addView(bar)
-        (txt.layoutParams as LinearLayout.LayoutParams).weight = 1.0F
-        (txt.layoutParams as LinearLayout.LayoutParams).gravity = Gravity.CENTER
         entryContents.addView(layout)
     }
 

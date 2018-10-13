@@ -24,6 +24,7 @@ class DayActivity : Activity() {
         })
         listView = findViewById(R.id.entries_list_view)
 
+        Log.d("fromToday", intent.getIntExtra("fromToday", 0).toString())
         listView.adapter = DayAdapter(this, intent.getIntExtra("fromToday", 0))
 
         dbtDb = DbtDatabase.getInstance(this)
