@@ -92,7 +92,11 @@ class EntryActivity : Activity() {
         fab.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v : View?) {
                 var type = -1
-                val time = (Date().time/1000).toInt()
+
+                val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                cal.time = Date()
+                val time = (cal.timeInMillis / 1000).toInt()
+
                 Log.d("AHHHH.fab clicked", "woot " + time)
                 for(i in 0..entryContents.childCount) {
                     val view : View = entryContents.getChildAt(i)

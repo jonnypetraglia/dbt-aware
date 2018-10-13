@@ -7,7 +7,6 @@ import android.support.design.widget.FloatingActionButton
 import android.util.Log
 import android.view.View
 import android.widget.ListView
-import java.util.*
 
 class DayActivity : Activity() {
 
@@ -25,12 +24,12 @@ class DayActivity : Activity() {
         })
         listView = findViewById(R.id.entries_list_view)
 
-        listView.adapter = DayAdapter(this, Date())
+        listView.adapter = DayAdapter(this, intent.getIntExtra("fromToday", 0))
 
         dbtDb = DbtDatabase.getInstance(this)
         val entries : List<Entry> = dbtDb?.dao()?.getAllEntries()!!
         for(entry in entries)
-            Log.d("AHHHH.Name:", entry.dateTime.toString() + " - " + entry.name)
+            Log.d("ALLLLL.Name:", entry.dateTime.toString() + " - " + entry.name)
     }
 
 }

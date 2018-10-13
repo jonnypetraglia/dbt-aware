@@ -9,17 +9,26 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import java.util.*
 
-class DayAdapter(ccontext: Context, day: Date)
+class DayAdapter(ccontext: Context, fromToday: Int)
     : BaseAdapter()
 {
     var entries : List<Entry>? = null
 
     init {
         val dbtDb = DbtDatabase.getInstance(ccontext)
-        Log.d("entriesAHHHH.Name:", ((getStartOfDay((day.time/1000).toInt())).toString()))
-        entries = dbtDb?.dao()?.getEntriesForDay(getStartOfDay((day.time/1000).toInt()))
-        for(entry in entries!!)
-            Log.d("AHHHH.Name:", entry.dateTime.toString() + " - " + entry)
+
+        val startOfToday = getStartOfDay(fromToday)
+        val endOfToday = startOfToday+86400
+
+        Log.d("AHHHH.Start:", "From " + startOfToday + " to " + endOfToday + " (" + fromToday + ")")
+
+        entries = dbtDb?.dao()?.getEntriesForDay(startOfToday, endOfToday)
+        Log.d("AHHHH.Count", "Hmm " + entries!!.size)
+        for(entry in entries!!) {
+            Log.d("AHHHH.Name!:", entry.toString())
+            Log.d("AHHHH.Diff!:", "" + startOfToday + "<=" + entry.dateTime + "=" + (startOfToday<=entry.dateTime) + " && " + endOfToday + ">" + entry.dateTime + "=" + (endOfToday>entry.dateTime))
+        }
+        Log.d("AHHHH.Count", "Hmm " + entries!!.size)
     }
 
     private val context = ccontext
@@ -49,16 +58,17 @@ class DayAdapter(ccontext: Context, day: Date)
         return entries!!.size
     }
 
+    companion object {
 
-    fun getStartOfDay(fromToday : Int) : Int {
-        val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-        cal.time = Date(); // compute start of the day for the timestamp
-        cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - fromToday)
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return (cal.timeInMillis / 1000).toInt();
+        fun getStartOfDay(fromToday: Int): Int {
+            val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+            cal.add(Calendar.DAY_OF_MONTH, -1 * fromToday)
+            cal.set(Calendar.HOUR_OF_DAY, 0)
+            cal.set(Calendar.MINUTE, 0)
+            cal.set(Calendar.SECOND, 0)
+            cal.set(Calendar.MILLISECOND, 0)
+            return (cal.timeInMillis / 1000).toInt()
+        }
     }
 
 }
