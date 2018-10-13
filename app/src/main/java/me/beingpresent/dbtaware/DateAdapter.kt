@@ -46,7 +46,7 @@ class DateAdapter(aactivity: Activity, llistener: View.OnClickListener)
             override fun onClick(v : View?) {
                 val intent = Intent(activity, DayActivity::class.java)
                 intent.putExtra("fromToday", fromToday)
-                activity.startActivity(intent)
+                activity.startActivityForResult(intent, 42)
             }
         })
         ll.addView(more)

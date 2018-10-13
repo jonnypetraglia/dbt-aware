@@ -21,6 +21,16 @@
         <activity android:name=".DayActivity" />
         <activity android:name=".EntryActivity" />
         <activity android:name=".SkillsActivity" />
+
+        <service
+            android:name=".ReminderService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name=".ReminderReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
     </application>
 
 </manifest>
