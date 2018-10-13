@@ -16,10 +16,10 @@ interface DbtDao {
     @Query("SELECT * from entry WHERE time >= :time AND time < (:time + 86400)")
     fun getEntriesForDay(time: Int): List<Entry>
 
-    @Query("SELECT name, MAX(rating) as maxRating FROM entry WHERE time > :time AND (:time + 86400) GROUP BY name ORDER BY type ASC")
+    @Query("SELECT name, MAX(rating) as maxRating FROM entry WHERE time >= :time AND time < (:time + 86400) GROUP BY name ORDER BY type ASC")
     fun getEntryMaxesForDay(time: Int): List<MaxPojo>
 
-    @Query("SELECT time, COUNT(type) as countRatings FROM entry WHERE time > :time AND (:time + 86400) GROUP BY time ORDER BY type ASC")
+    @Query("SELECT time, COUNT(type) as countRatings FROM entry WHERE time >= :time AND time < (:time + 86400) GROUP BY time ORDER BY type ASC")
     fun getTimesForDay(time: Int): List<TimePojo>
 
     @Insert()

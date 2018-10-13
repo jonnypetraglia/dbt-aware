@@ -19,18 +19,17 @@ class DayActivity : Activity() {
         val fab: FloatingActionButton= findViewById(R.id.fab)
         fab.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v : View ?) {
-                startActivity(Intent(this@DayActivity, EntryActivity::class.java))
+                startActivityForResult(Intent(this@DayActivity, EntryActivity::class.java), 42)
             }
         })
         listView = findViewById(R.id.entries_list_view)
 
         Log.d("fromToday", intent.getIntExtra("fromToday", 0).toString())
         listView.adapter = DayAdapter(this, intent.getIntExtra("fromToday", 0))
-
-        dbtDb = DbtDatabase.getInstance(this)
-        val entries : List<Entry> = dbtDb?.dao()?.getAllEntries()!!
-        for(entry in entries)
-            Log.d("ALLLLL.Name:", entry.dateTime.toString() + " - " + entry.name)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        listView.deferNotifyDataSetChanged()
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 }

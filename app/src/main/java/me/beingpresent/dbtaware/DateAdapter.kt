@@ -30,22 +30,36 @@ class DateAdapter(aactivity: Activity, llistener: View.OnClickListener)
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        Log.d("DBT-DateAdapter", "instantiateItem")
+        Log.d("DBT-DateAdapter", "instantiateItem " + ((365 - position)*-1))
 
+        val fromToday = (365 - position - 1) * -1
 
         val view = ScrollView(activity)
         val ll = LinearLayout(activity)
         ll.orientation = LinearLayout.VERTICAL
         view.addView(ll)
-        val day = Date()
-        val i = getItem(position) as Int
-        day.date = day.date - i
+
+        val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        cal.add(Calendar.DAY_OF_MONTH, fromToday)
+        Log.d("instantiateItem", cal.get(Calendar.DAY_OF_MONTH).toString())
+
+        val more = Button(activity)
+        more.text = SimpleDateFormat("MMM d").format(cal.time)
+        more.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v : View?) {
+                val intent = Intent(activity, DayActivity::class.java)
+                intent.putExtra("fromToday", fromToday)
+                activity.startActivity(intent)
+            }
+        })
+        ll.addView(more)
+
+        Log.d("instantiateItem!", getStartOfDay(fromToday).toString())
 
 
         dbtDb = DbtDatabase.getInstance(activity)
-        val pojoMaxs = dbtDb?.dao()?.getEntryMaxesForDay(getStartOfDay((day.time/1000).toInt()))!!
+        val pojoMaxs = dbtDb?.dao()?.getEntryMaxesForDay(getStartOfDay(fromToday))!!
         for(pojo in pojoMaxs) {
-            Log.d("DBT.Max:", pojo.toString())
             val layout = LayoutInflater.from(activity).
                     inflate(R.layout.entry_line, null, false)
 
@@ -57,24 +71,13 @@ class DateAdapter(aactivity: Activity, llistener: View.OnClickListener)
             ll.addView(layout)
         }
 
-        val more = Button(activity)
-        more.text = "View Details"
-        more.setOnClickListener(object: View.OnClickListener {
-            override fun onClick(v : View?) {
-                val intent = Intent(activity, DayActivity::class.java)
-                intent.putExtra("fromToday", i+365)
-                activity.startActivity(intent)
-            }
-        })
-        ll.addView(more)
-
-        activity.title = SimpleDateFormat("MMM d").format(day).toString()
-
         container.addView(view)
 
         view.setOnClickListener(listener)
         return view
     }
+
+
 
     override fun destroyItem(container: ViewGroup, position: Int, view: Any) {
         container.removeView(view as View?)
