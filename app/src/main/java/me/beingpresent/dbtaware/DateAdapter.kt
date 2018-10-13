@@ -5,13 +5,11 @@ import android.content.Intent
 import android.support.v4.view.PagerAdapter
 import android.support.v7.widget.AppCompatRatingBar
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.ScrollView
-import android.widget.TextView
+import android.widget.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,7 +30,7 @@ class DateAdapter(aactivity: Activity, llistener: View.OnClickListener)
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         Log.d("DBT-DateAdapter", "instantiateItem " + ((365 - position)*-1))
 
-        val fromToday = (365 - position - 1) * -1
+        val fromToday = getItem(position) as Int
 
         val view = ScrollView(activity)
         val ll = LinearLayout(activity)
@@ -41,7 +39,6 @@ class DateAdapter(aactivity: Activity, llistener: View.OnClickListener)
 
         val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
         cal.add(Calendar.DAY_OF_MONTH, fromToday)
-        Log.d("instantiateItem", cal.get(Calendar.DAY_OF_MONTH).toString())
 
         val more = Button(activity)
         more.text = SimpleDateFormat("MMM d").format(cal.time)
@@ -53,20 +50,35 @@ class DateAdapter(aactivity: Activity, llistener: View.OnClickListener)
             }
         })
         ll.addView(more)
-
-        Log.d("instantiateItem!", getStartOfDay(fromToday).toString())
+        more.setOnLongClickListener(object: View.OnLongClickListener{
+            override fun onLongClick(p0: View?): Boolean {
+                dbtDb?.dao()?.deleteAll()
+                Toast.makeText(activity, "Deleted all entries", Toast.LENGTH_LONG).show()
+                return true
+            }
+        })
 
 
         dbtDb = DbtDatabase.getInstance(activity)
         val pojoMaxs = dbtDb?.dao()?.getEntryMaxesForDay(getStartOfDay(fromToday))!!
         for(pojo in pojoMaxs) {
             val layout = LayoutInflater.from(activity).
-                    inflate(R.layout.entry_line, null, false)
+                    inflate(R.layout.entry_line, null, false) as LinearLayout
 
-            layout.findViewById<TextView>(android.R.id.text1).text = pojo.name
-            val ratingBar = layout.findViewById<AppCompatRatingBar>(android.R.id.progress)
-            ratingBar.rating = pojo.maxRating
-            ratingBar.setIsIndicator(true)
+            if(pojo.type>1) {
+                layout.removeView(layout.findViewById(android.R.id.progress))
+                val checkBox = CheckBox(activity)
+                checkBox.setText(pojo.name)
+                checkBox.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20F)
+                checkBox.isEnabled = false
+                checkBox.isChecked = true
+                layout.addView(checkBox)
+            } else {
+                val ratingBar = layout.findViewById<AppCompatRatingBar>(android.R.id.progress)
+                ratingBar.rating = pojo.maxRating
+                ratingBar.setIsIndicator(true)
+                layout.findViewById<TextView>(android.R.id.text1).text = pojo.name
+            }
 
             ll.addView(layout)
         }
@@ -83,13 +95,8 @@ class DateAdapter(aactivity: Activity, llistener: View.OnClickListener)
         container.removeView(view as View?)
     }
 
-    override fun getPageTitle(position: Int): CharSequence? {
-        return "Day of " + getItem(position).toString()
-    }
-
     fun getItem(position: Int): Any {
-        return -1 * (position + 1)
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return (365 - position - 1) * -1
     }
 
     override fun getCount(): Int {

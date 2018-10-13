@@ -11,7 +11,6 @@ import android.widget.ListView
 class DayActivity : Activity() {
 
     private lateinit var listView: ListView
-    private var dbtDb: DbtDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +21,7 @@ class DayActivity : Activity() {
                 startActivityForResult(Intent(this@DayActivity, EntryActivity::class.java), 42)
             }
         })
-        listView = findViewById(R.id.entries_list_view)
+        listView = this.findViewById(R.id.entries_list_view)
 
         Log.d("fromToday", intent.getIntExtra("fromToday", 0).toString())
         listView.adapter = DayAdapter(this, intent.getIntExtra("fromToday", 0))

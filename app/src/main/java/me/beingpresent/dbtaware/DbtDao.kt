@@ -7,7 +7,7 @@ import android.arch.persistence.room.Query
 @Dao
 interface DbtDao {
 
-    data class MaxPojo(var name: String, var maxRating: Float)
+    data class MaxPojo(var name: String, var type: Int, var maxRating: Float)
     data class TimePojo(var time: Int, var countRatings: Int)
 
     @Query("SELECT * from entry")
@@ -16,7 +16,7 @@ interface DbtDao {
     @Query("SELECT * from entry WHERE time >= :time AND time < (:time + 86400)")
     fun getEntriesForDay(time: Int): List<Entry>
 
-    @Query("SELECT name, MAX(rating) as maxRating FROM entry WHERE time >= :time AND time < (:time + 86400) GROUP BY name ORDER BY type ASC")
+    @Query("SELECT name, type, MAX(rating) as maxRating FROM entry WHERE time >= :time AND time < (:time + 86400) GROUP BY name, type ORDER BY type ASC")
     fun getEntryMaxesForDay(time: Int): List<MaxPojo>
 
     @Query("SELECT time, COUNT(type) as countRatings FROM entry WHERE time >= :time AND time < (:time + 86400) GROUP BY time ORDER BY type ASC")
