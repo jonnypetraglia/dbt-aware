@@ -99,7 +99,7 @@ class EntryActivity : Activity() {
 
                 Log.d("AHHHH.fab clicked", "woot " + time)
                 for(i in 0..entryContents.childCount) {
-                    val view : View = entryContents.getChildAt(i)
+                    val view : View? = entryContents.getChildAt(i)
                     var name : String?
                     var rating: Int
                     Log.d("AHHHH.fab clicked", "woot " + i)
@@ -119,7 +119,7 @@ class EntryActivity : Activity() {
                     }
                     insertEntry(type, name, rating, time)
                 }
-
+                this@EntryActivity.finish()
             }
         })
     }
