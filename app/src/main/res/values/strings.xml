@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">DBT Aware</string>
-    <string name="title_activity_day">Day Entries</string>
     <string name="title_activity_date">Date Summary</string>
-    <string name="title_activity_entry">Entry?</string>
+    <string name="title_activity_entry">Entry</string>
 </resources>

@@ -92,7 +92,7 @@ class ReminderService : IntentService("ReminderService") {
                         // Set the intent that will fire when the user taps the notification
                         .setContentIntent(pendingIntent)
                         .setSmallIcon(R.drawable.navigation_empty_icon)
-                        .setLargeIcon(BitmapFactory.decodeResource(res, R.mipmap.ic_launcher))
+                        .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.app_np1130074))
                         .setAutoCancel(false)
                         .setContentTitle(title)
                         .setStyle(Notification.BigTextStyle()
@@ -104,7 +104,7 @@ class ReminderService : IntentService("ReminderService") {
                         // Set the intent that will fire when the user taps the notification
                         .setContentIntent(pendingIntent)
                         .setSmallIcon(R.drawable.navigation_empty_icon)
-                        .setLargeIcon(BitmapFactory.decodeResource(res, R.mipmap.ic_launcher))
+                        .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.app_np1130074))
                         .setAutoCancel(false)
                         .setPriority(Notification.PRIORITY_MAX)
                         .setContentTitle(title)
